@@ -2,7 +2,7 @@ pragma solidity^0.4.0;
 contract token{
     function totalSupply()public constant returns(uint256);
     function transfer(address to,uint256 amount)public  returns(bool);
-    function mint(uint256 value)public  returns(bool);
+    function mint(uint256 value)public  ;
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {}
     function approve(address _spender, uint256 _value) returns (bool success) {}
     function allowance(address _owner, address _spender) constant returns (uint256) {}
@@ -11,10 +11,27 @@ contract token{
 }
 
 contract standardtoken is token{
-    address owner;
-    mapping(address=>uint256)balances;
+    
+     string public name;
+    uint256 public totalSupply_;
+    uint256 public decimals;
+    string public symbol;
+    
+     function standardtoken(){
+        
+        totalSupply_=5000;
+        owner=msg.sender;
+        balances[owner]=totalSupply_;
+        symbol="mnw token";
+        name="mnw";
+        decimals=18;
+        
+    }
+    
+    address public owner;
+    mapping(address=>uint256)public balances;
     mapping(address => mapping(address => uint256)) allow;
-    uint256 public totalSupply;
+    
     
     modifier onlyowner(){
         require(owner==msg.sender);
@@ -26,17 +43,14 @@ contract standardtoken is token{
    }
   
    function transfer(address to,uint256 amount)public  onlyowner() returns(bool){
-     require(balances[owner]>=amount&& amount>0);
-      balances[owner]-=amount;
-      balances[to]+=amount;
-    
-      
-   }
-   function mint(uint256 value)public onlyowner() returns(bool){
+     require(balances[owner]>=amount&& amount>0 && amount<totalSupply_);
      
-      
-       
+      balances[owner]-=amount; 
+     }
+   function mint(uint256 value)public {
+     
        balances[owner]+=value;
+      require(balances[owner]<=totalSupply_);
       
    }
    
@@ -63,21 +77,4 @@ contract standardtoken is token{
      
 
 }
-contract testcoin is standardtoken{
-    string public name;
-    uint256 public totalSupply;
-    uint256 public decimals;
-    string public symbol;
-    
-    function testcoin(){
-        owner=msg.sender;
-        totalSupply=5000;
-        balances[owner]=totalSupply;
-        symbol="mnw token";
-        name="mnw";
-        decimals=18;
-        
-    }
-    
-}
-    
+ 
